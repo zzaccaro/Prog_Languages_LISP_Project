@@ -184,10 +184,26 @@
 )
 
 ;; X query
-(defun X ()
+(defun X (name1 relation name2)
+	(setf p1 (gethash name1 familytree))
+	(setf p2 (gethash name2 familytree))
 
-
+	(if (or (eq p1 nil) (eq p2 nil))
+		(error "Person not in family tree.")
 	)
+
+	(setf answer "")
+	(cond 
+		((equalp relation 'spouse) (setf answer (if (isSpouse p1 p2) "Yes" "No")))
+		((equalp relation 'parent) (setf answer (if (isParent p1 p2) "Yes" "No")))
+		((equalp relation 'sibling) (setf answer (if (isSibling p1 p2) "Yes" "No")))
+		((equalp relation 'ancestor) (setf answer (if (isAncestor p1 p2) "Yes" "No")))
+		((equalp relation 'cousin) (setf answer (if (isCousin p1 p2) "Yes" "No")))
+		((equalp relation 'relative) (setf answer (if (isRelative p1 p2) "Yes" "No")))
+		((equalp relation 'unrelated) (setf answer (if (not (isRelative p1 p2)) "Yes" "No")))
+	)
+	answer
+)
 
 ;; W query
 (defun W ()
