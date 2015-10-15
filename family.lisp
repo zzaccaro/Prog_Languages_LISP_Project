@@ -78,10 +78,26 @@
 	)
 
 ;; R query
-(defun R ()
+(defun R (p1 p2)
+	(setf per1 (gethash 'p1 familytree))
+	(setf per2 (gethash 'p2 familytree))
 
+	(cond 
+		((or (equalp per1 nil) (equalp per2 nil)) "Unrelated")
 
+		((isSpouse per1 per2) "Spouse")
+
+		((isParent per1 per2) "Parent")
+
+		((isSibling per1 per2) "Sibling")
+
+		((isAncestor per1 per2) "Ancestor")
+
+		((isRelative per1 per2) (setf ancestors (getAncestors per1)) "Relative")
+
+		(t "Unrelated")
 	)
+)
 
 ;; boolean for spouse
 (defun isSpouse (p1 p2)
