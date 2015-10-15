@@ -49,6 +49,16 @@
 ;		(format t " " _ _ _)
 ;		))
 
+(defun openfile (with-open-file (str *STANDARD-INPUT*
+                     :direction :INPUT
+                     ;:if-exists <if-exists>
+                     :if-does-not-exist :ERROR)
+  		(loop for line = (read-line str nil)
+  		while line do (line)
+		)
+	)
+)
+
 ;; E query
 (defun E ()
 
