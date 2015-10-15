@@ -3,7 +3,6 @@
                      ;:if-exists <if-exists>
                      :if-does-not-exist :ERROR)
   	(loop for line = (read-line str nil)
-  		while line do ())
-
-
-  	)
+  		while line do (line)
+	)
+)

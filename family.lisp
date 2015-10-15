@@ -68,15 +68,15 @@
 	)
 
 ;; boolean for spouse
-(defun isSpouse ()
-
-
+(defun isSpouse ((person p1) (person p2))
+	(if (not (eq p1 p2))
+	(member (person-spouse p1) (person-spouse p2))
 	)
+)
 
 ;; boolean for parent
-(defun isParent ()
-
-	
+(defun isParent ((person p1) (person p2))
+	(member p1 (person-parents p2))
 	)
 
 ;; boolean for ancestor
