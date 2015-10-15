@@ -49,7 +49,7 @@
 ;		(format t " " _ _ _)
 ;		))
 
-(defun openfile (with-open-file (str *STANDARD-INPUT*
+(defun openfile() with-open-file (str *STANDARD-INPUT*
                      :direction :INPUT
                      ;:if-exists <if-exists>
                      :if-does-not-exist :ERROR)
@@ -57,7 +57,6 @@
   		while line do (line)
 		)
 	)
-)
 
 ;; E query
 (defun E ()
@@ -67,16 +66,19 @@
 
 (defun checkOrAddToGraph (nodeName par1 par2)
 	(cond
-		(if-does-not-exist (gethash 'nodeName familytree) (setf (gethash 'nodeName familytree) ('nodeName par1 par2)))
-		((isAdamAndEve 'nodeName) (setf (person-parents 'nodeName) (par1 par2)))
-		((not (equalp par1 par2)) ((setf (person-children p1) 'nodeName) (setf (person-children p2) 'nodeName)))
+		(if-does-not-exist (gethash nodeName familytree) (setf (gethash nodeName familytree) (nodeName par1 par2)))
+		((isAdamAndEve nodeName) (setf (person-parents nodeName) (par1 par2)))
+		((not (equalp par1 par2)) (progn (add-children p1 nodeName) (add-children p2 nodeName)))
 		)
-
+		
 	)
+		
+
+	
 
 ;; function to check if person is part of Adam and Eve generation
 (defun isAdamAndEve (name)
-	(if ((not (member name (person-parents (gethash name familytree)) ) ))
+	(if (not (member name (person-parents (gethash name familytree))))
 		nil 
 		t)
 	)
@@ -112,7 +114,7 @@
 
 ;; boolean for parent
 (defun isParent (p1 p2)
-	(if (equalp (person-name p1) (person-name p2)) (return-from nil))
+	(if (equalp (person-name p1) (person-name p2)) return-from nil)
 
 	(if (not (member (person-name p1) (person-parents p2)))
 		nil 
@@ -136,11 +138,6 @@
 (defun isAncestor (p1 p2)
 	;; check for same name first...
 
-	(if (checkParents(p1 p2))
-		(return-from t) 
-		(return-from nil)
-	)
-
 	(cond 
 		((and(equalp (person-name p1) (person-name p2)) (isAdamAndEve (person-name p1)))) 
 		(checkParents p1 p2)
@@ -150,9 +147,9 @@
 
 ;; recursive method for isAncestor
 (defun checkParents (target p)
-	(if (isAdamAndEve((person-name p)))
-		(return-from nil) 
-		(if ((equalp (first (person-parents p)) (person-name target)))
+	(if (isAdamAndEve person-name p)
+		return-from nil) 
+		(if (equalp (first (person-parents p)) (person-name target))
 			(return-from t) 
 			(if ((equalp (second (person-parents p)) (person-name target)))
 				(return-from t) 
@@ -166,7 +163,7 @@
 			)
 		)
 	)
-)
+
 
 ;; boolean for cousin
 (defun isCousin ()
