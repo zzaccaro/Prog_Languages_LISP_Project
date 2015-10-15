@@ -59,18 +59,22 @@
 	)
 
 ;; E query
-(defun E ()
+(defun E (name1 name2 name3)
+	(checkOrAddToGraph name1 name1 name1)
+	(checkOrAddToGraph name2 name2 name2)
+	(checkOrAddToGraph name3 name1 name2)
 
-
+	(add-spouse (gethash name1 familytree) name2)
+	(add-spouse (gethash name2 familytree) name1)
 	)
 
 (defun checkOrAddToGraph (nodeName par1 par2)
 	(cond
-		(if-does-not-exist (gethash nodeName familytree) (setf (gethash nodeName familytree) (nodeName par1 par2)))
+		(if-does-not-exist (gethash nodeName familytree) 
+			(progn (do (create-person nodeName (par1 par2))) (do (setf (gethash nodeName familytree) (nodeName par1 par2)))))
 		((isAdamAndEve nodeName) (setf (person-parents nodeName) (par1 par2)))
 		((not (equalp par1 par2)) (progn (add-children p1 nodeName) (add-children p2 nodeName)))
 		)
-		
 	)
 		
 
