@@ -1,5 +1,39 @@
-;; people object
-()
+;; person structure and functions
+
+(defstruct person 
+	(name nil) 
+	(parents nil) 
+	(children nil) 
+	(spouse nil))
+
+(defun create-person (name parentstructs)
+	(when (not (listp parentstructs))
+		(error "Parentstructs is not a list."))
+	(let ((p (make-person)))
+		(setf (person-name p) name)
+		(setf (person-parents p) (copy-list parentstructs))
+	p))
+
+;function to add new child
+(defun add-children (p newchild) 
+	(nconc (person-children p) (list newchild))
+	)
+
+;function to add parent
+(defun add-parent (p newparent)
+	(nconc (person-parents p) (list newparent))
+	)
+
+;function to set parents
+(defun set-parents (p parent1 parent2)
+	(setf (person-parents p) (list parent1 parent2))
+	)
+
+;function to add spouse
+(defun add-spouse (p spouse)
+	(nconc (person-spouse p) (list spouse))
+	)
+
 
 
 ;; main function
