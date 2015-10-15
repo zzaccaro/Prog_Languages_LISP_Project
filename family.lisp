@@ -78,7 +78,7 @@
 	(if (not (member (person-name p1) (person-spouse p2)))
 		nil 
 		t)
-	)
+)
 
 ;; boolean for parent
 (defun isParent (p1 p2)
@@ -92,7 +92,7 @@
 ;; boolean for sibling
 (defun isSibling (p1 p2)
 
-	)
+)
 
 ;; boolean for ancestor
 (defun isAncestor (p1 p2)
