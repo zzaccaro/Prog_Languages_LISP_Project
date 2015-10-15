@@ -65,8 +65,12 @@
 
 	)
 
-(defun checkOrAddToGraph (nodeName p1 p2)
-	
+(defun checkOrAddToGraph (nodeName par1 par2)
+	(cond
+		(if-does-not-exist (gethash 'nodeName familytree) (setf (gethash 'nodeName familytree) ('nodeName par1 par2)))
+		((isAdamAndEve 'nodeName) (setf (person-parents 'nodeName) (par1 par2)))
+		((not (equalp par1 par2)) ((setf (person-children p1) 'nodeName) (setf (person-children p2) 'nodeName)))
+		)
 
 	)
 
@@ -171,9 +175,17 @@
 	)
 
 ;; boolean for relative
-(defun isRelative ()
+(defun isRelative (p1 p2)
 
-	
+	(setf p1rels (getAncestors p1))
+	(setf p2rels (getAncestors p2))
+
+	(loop for x in p1rels do (
+		loop for y in p2rels do (
+			equalp p1 p2)
+		)
+	)
+
 	)
 
 ;; X query
