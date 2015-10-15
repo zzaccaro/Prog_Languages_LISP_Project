@@ -117,6 +117,14 @@
 
 ;; boolean for sibling
 (defun isSibling (p1 p2)
+	(if (isAdamAndEve (person-name p1) (person-name p2)) nil)
+
+	(setf person1parents (person-parents p1))
+	(setf person2parents (person-parents p2))
+	(sort 'person1parents)
+	(sort 'person2parents)
+
+	(equalp person1parents person2parents)
 
 )
 
@@ -128,6 +136,12 @@
 		(return-from t) 
 		(return-from nil)
 	)
+
+	(cond 
+		((and(equalp (person-name p1) (person-name p2)) (isAdamAndEve (person-name p1)))) 
+		(checkParents p1 p2)
+		(t nil)
+		)
 )
 
 ;; recursive method for isAncestor
