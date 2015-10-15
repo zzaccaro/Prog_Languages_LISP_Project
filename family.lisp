@@ -66,7 +66,7 @@
 
 	(add-spouse (gethash name1 familytree) name2)
 	(add-spouse (gethash name2 familytree) name1)
-	)
+)
 
 (defun checkOrAddToGraph (nodeName par1 par2)
 	(cond
@@ -74,23 +74,20 @@
 			(progn (do (create-person nodeName (par1 par2))) (do (setf (gethash nodeName familytree) (nodeName par1 par2)))))
 		((isAdamAndEve nodeName) (setf (person-parents nodeName) (par1 par2)))
 		((not (equalp par1 par2)) (progn (add-children p1 nodeName) (add-children p2 nodeName)))
-		)
 	)
+)
 		
-
-	
-
 ;; function to check if person is part of Adam and Eve generation
 (defun isAdamAndEve (name)
 	(if (not (member name (person-parents (gethash name familytree))))
 		nil 
 		t)
-	)
+)
 
 ;; R query
 (defun R (p1 p2)
-	(setf per1 (gethash 'p1 familytree))
-	(setf per2 (gethash 'p2 familytree))
+	(setf per1 (gethash p1 familytree))
+	(setf per2 (gethash p2 familytree))
 
 	(cond 
 		((or (equalp per1 nil) (equalp per2 nil)) "Unrelated")
@@ -118,56 +115,54 @@
 
 ;; boolean for parent
 (defun isParent (p1 p2)
-	(if (equalp (person-name p1) (person-name p2)) return-from nil)
+	(if (equalp (person-name p1) (person-name p2)) nil)
 
 	(if (not (member (person-name p1) (person-parents p2)))
 		nil 
 		t)
-	)
+)
 
 ;; boolean for sibling
 (defun isSibling (p1 p2)
-	(if (isAdamAndEve (person-name p1) (person-name p2)) nil)
+	(if (isAdamAndEve (person-name p1)) nil)
+	(if (isAdamAndEve (person-name p2)) nil)
 
 	(setf person1parents (person-parents p1))
 	(setf person2parents (person-parents p2))
-	(sort 'person1parents)
-	(sort 'person2parents)
+	(setf person1parents (sort person1parents #'string<))
+	(setf person2parents (sort person2parents #'string<))
 
 	(equalp person1parents person2parents)
-
 )
 
 ;; boolean for ancestor
 (defun isAncestor (p1 p2)
-	;; check for same name first...
-
 	(cond 
-		((and(equalp (person-name p1) (person-name p2)) (isAdamAndEve (person-name p1)))) 
-		(checkParents p1 p2)
+		((and (equalp (person-name p1) (person-name p2)) (isAdamAndEve (person-name p1))) t) 
+		((checkParents p1 p2) t) 
 		(t nil)
-		)
+	)
 )
 
 ;; recursive method for isAncestor
 (defun checkParents (target p)
-	(if (isAdamAndEve person-name p)
-		return-from nil) 
+	(if (isAdamAndEve (person-name p))
+		nil 
 		(if (equalp (first (person-parents p)) (person-name target))
-			(return-from t) 
-			(if ((equalp (second (person-parents p)) (person-name target)))
-				(return-from t) 
-				(if ((checkParents(target (gethash (first (person-parents p)) familytree))))
-					(return-from t) 
-					(if ((checkParents(target (gethash (second (person-parents p)) familytree))))
-						(return-from t) 
-						(return-from nil)
+			t 
+			(if (equalp (second (person-parents p)) (person-name target))
+				t  
+				(if (checkParents target (gethash (first (person-parents p)) familytree))
+					t  
+					(if (checkParents target (gethash (second (person-parents p)) familytree))
+						t 
+						nil
 					)
 				)
 			)
 		)
 	)
-
+)
 
 ;; boolean for cousin
 (defun isCousin ()
@@ -177,17 +172,16 @@
 
 ;; boolean for relative
 (defun isRelative (p1 p2)
-
 	(setf p1rels (getAncestors p1))
 	(setf p2rels (getAncestors p2))
 
 	(loop for x in p1rels do (
 		loop for y in p2rels do (
-			equalp p1 p2)
+			(return-from (equalp x y))
 		)
 	)
-
-	)
+	nil
+)
 
 ;; X query
 (defun X ()
