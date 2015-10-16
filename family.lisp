@@ -70,12 +70,13 @@
 
 (defun checkOrAddToGraph (nodeName par1 par2)
 	(cond
-		(if-does-not-exist (gethash nodeName familytree) 
-			(progn (do (create-person nodeName (par1 par2))) (do (setf (gethash nodeName familytree) (nodeName par1 par2)))))
+		((not (member nodeName familytree))
+			(progn (create-person nodeName (par1 par2)) (setf (gethash nodeName familytree) (nodeName par1 par2))))
 		((isAdamAndEve nodeName) (setf (person-parents nodeName) (par1 par2)))
 		((not (equalp par1 par2)) (progn (add-children p1 nodeName) (add-children p2 nodeName)))
 	)
 )
+
 		
 ;; function to check if person is part of Adam and Eve generation
 (defun isAdamAndEve (name)
@@ -180,8 +181,9 @@
 			(return-from (equalp x y))
 		)
 	)
-	nil
 )
+	nil
+	)
 
 ;; X query
 (defun X (name1 relation name2)
@@ -206,31 +208,73 @@
 )
 
 ;; W query
-(defun W ()
+(defun W (relation name)
+	(setf person (gethash name familytree))
+	(setf wPeople ())
 
+	(if (eq p1 nil) 
+		(error "Person not in family tree.")
+		)
 
+	(cond
+		((equalp relation 'spouse) (nconc wPeople (person-spouse name)))
+		((equalp relation 'parent) (if (isAdamAndEve name) (nconc wPeople name) (else (nconc wPeople (person-parents name)))))
+		((equalp relation 'sibling) (nconc wPeople (getSiblings name)))
+		((equalp relation 'ancestor) (nconc wPeople (getAncestors name)))
+		((equalp relation 'relative) (nconc wPeople (getRelatives name)))
+		((equalp relation 'unrelated) (nconc wPeople (getStrangers name)))
+		)
+
+	(sort wPeople)
+	wPeople
 	)
 
 ;; collects all people who are siblings of a person
-(defun getSiblings ()
+(defun getSiblings (p)
+	(setf siblings ())
 
-
+	(loop for entry in familytree
+		(if (isSibling p (gethash entry familytree))
+			(nconc siblings (list entry))
+			)
+		)
+	siblings
 	)
 
 ;; collects all people who are ancestors of a person
-(defun getAncestors ()
-
-
+(defun getAncestors (p)
+	(setf ancestrs ())
+	(loop for entry in familytree
+		(if (checkParents (gethash entry familytree) p)
+			(nconc ancestrs (list entry))
+			)
+		)
+	;cond for if no ancestors
+	(if (eq ancestrs nil)
+		(nconc ancestrs (list p))
+		)
+	;return ancestors
+	ancestrs
 	)
 
 ;; collects all people who are relatives of a person
-(defun getRelatives ()
-
-
+(defun getRelatives (p)
+	(setf rels ())
+	(loop for entry in familytree
+		(if (isRelative entry p)
+			(nconc rels (list entry))
+			)
+		)
+	rels
 	)
 
 ;; collects all people who are not related to a person
-(defun getStrangers ()
-
-
+(defun getStrangers (p)
+	(setf strange ())
+	(loop for entry in familytree
+		(if (and (not (isRelative entry p)) (not (isSpouse entry p)))
+			(nconc strange (list entry))
+			)
 	)
+	strange
+)
