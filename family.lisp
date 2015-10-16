@@ -73,8 +73,8 @@
 		((not (member nodeName familytree))
 			(progn (create-person nodeName (par1 par2)) (setf (gethash nodeName familytree) (nodeName par1 par2))))
 		((isAdamAndEve nodeName) (setf (person-parents nodeName) (par1 par2)))
-		((not (equalp par1 par2)) (progn (add-children p1 nodeName) (add-children p2 nodeName)))
 	)
+	(if (not (equalp par1 par2)) (progn (add-children par1 nodeName) (add-children par2 nodeName)))
 )
 
 		
