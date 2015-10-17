@@ -196,6 +196,9 @@
 	(setf pList1 (remove-duplicates (sort pList1 #'string-lessp)))
 	)
 
+(defun isCousin (p1 p2 cuzNum remNum)
+	 (member p2 (getCousins '(p1) 'cuzNum 'remNum))
+	)
 
 
 
@@ -222,12 +225,16 @@
 	)
 
 	(setf answer "")
+
+	(if (eq 'Cons (type-of relation))
+		(setf answer (if (isCousin name1 name2 (second relation) (third relation))))
+		)
+
 	(cond 
 		((equalp relation 'spouse) (setf answer (if (isSpouse p1 p2) "Yes" "No")))
 		((equalp relation 'parent) (setf answer (if (isParent p1 p2) "Yes" "No")))
 		((equalp relation 'sibling) (setf answer (if (isSibling p1 p2) "Yes" "No")))
 		((equalp relation 'ancestor) (setf answer (if (isAncestor p1 p2) "Yes" "No")))
-		;((equalp relation 'cousin) (setf answer (if (isCousin p1 p2) "Yes" "No")))
 		((equalp relation 'relative) (setf answer (if (isRelative p1 p2) "Yes" "No")))
 		((equalp relation 'unrelated) (setf answer (if (not (isRelative p1 p2)) "Yes" "No")))
 	)
@@ -243,12 +250,16 @@
 		(error "Person not in family tree.")
 	)
 
+	;cousin case
+	(if (eq 'Cons (type-of relation))
+		(setf wPeople (nconc wPeople (getCousins person (second relation) (third relation))))
+		)
+
 	(cond
 		((equalp relation 'spouse) (setf wPeople (nconc wPeople (person-spouse person))))
 		((equalp relation 'parent) (if (isAdamAndEve name) (setf wPeople (nconc wPeople (list name))) (setf wPeople (nconc wPeople (person-parents person)))))
 		((equalp relation 'sibling) (setf wPeople (nconc wPeople (getSiblings person))))
 		((equalp relation 'ancestor) (setf wPeople (nconc wPeople (getAncestors person))))
-		;; add cousin relationship here
 		((equalp relation 'relative) (setf wPeople (nconc wPeople (getRelatives person))))
 		((equalp relation 'unrelated) (setf wPeople (nconc wPeople (getStrangers person))))
 	)
