@@ -38,28 +38,68 @@
 
 ;; main function
 (defun family ()
+	(setf path "./input.txt")
+	(readfile path)
+)
 
+(defun readfile (string)
+    (with-open-file (infile string :direction :input)
+        (do ((line (read-line infile nil 'eof) (read-line infile nil 'eof))) 
+            ((eql line 'eof) 'done)
 
-	)
+             (setf inputList (read-from-string line))
+             (setf arg1 (first inputList))
+             (setf arg2 (second inputList))
+             (setf arg3 (third inputList))
+             (setf arg4 (fourth inputList))
 
-;; function to handle input
-;(defun handle-line ()
-;	(let ((a ))
-;		(setf a (read __ ))
-;		(format t " " _ _ _)
-;		))
+             (cond 
+             	((eq 'E arg1) 
+             		(if (eq nil arg4) 
+             			(E1 arg2 arg3) 
+             			(E2 arg2 arg3 arg4)
+           			)
+             	)
+             	((eq 'R arg1) 
+             		(progn 
+             			(format t "~a~%" line) 
+             			(print (R arg2 arg3)) 
+             			(format t "~%")
+             		)
+             	)
+             	((eq 'W arg1) 
+             		(progn 
+             			(format t "~a~%" line) 
+             			(setf wPeopleList (W arg2 arg3)) 
+             			(loop for x in wPeopleList do 
+             				(print x)
+             			) 
+             			(format t "~%")
+             		)
+             	)
+             	((eq 'X arg1) 
+             		(progn 
+             			(format t "~a~%" line) 
+             			(print (X arg2 arg3 arg4)) 
+             			(format t "~%")
+             		)
+             	)
+             )
+        )
+    )
+)
 
-(defun openfile() with-open-file (str *STANDARD-INPUT*
-                     :direction :INPUT
-                     ;:if-exists <if-exists>
-                     :if-does-not-exist :ERROR)
-  		(loop for line = (read-line str nil)
-  		while line do (line)
-		)
-	)
+;; E query (first version)
+(defun E1 (name1 name2)
+	(checkOrAddToGraph name1 name1 name1)
+	(checkOrAddToGraph name2 name2 name2)
 
-;; E query
-(defun E (name1 name2 name3)
+	(add-spouse (gethash name1 familytree) name2)
+	(add-spouse (gethash name2 familytree) name1)
+)
+
+;; E query (second version)
+(defun E2 (name1 name2 name3)
 	(checkOrAddToGraph name1 name1 name1)
 	(checkOrAddToGraph name2 name2 name2)
 	(checkOrAddToGraph name3 name1 name2)
