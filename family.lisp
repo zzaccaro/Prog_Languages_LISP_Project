@@ -164,11 +164,10 @@
 	)
 )
 
-;; boolean for cousin
 (defun getCousins (p cuzNum remNum)
-"Gets a list of all of the First Cousins of person"
-"Gets parents, then parents siblings, then parent's sibling's kids"
-"CALLED WITH: (getCousinsXY '(person) 'number 'number)"
+;"Gets a list of all of the First Cousins of person"
+;"Gets parents, then parents siblings, then parent's sibling's kids"
+;"CALLED WITH: (getCousinsXY '(person) 'number 'number)"
 	(setf pList1 p)
 
 	;get shared grandparents
@@ -194,13 +193,12 @@
 		)
 
 	(setf pList1 (remove-duplicates (sort pList1 #'string-lessp)))
-	)
+)
 
+;; boolean for cousin
 (defun isCousin (p1 p2 cuzNum remNum)
-	 (member p2 (getCousins '(p1) 'cuzNum 'remNum))
-	)
-
-
+	 (member p1 (getCousins (list p2) cuzNum remNum))
+)
 
 ;; boolean for relative
 (defun isRelative (p1 p2)
@@ -227,8 +225,11 @@
 	(setf answer "")
 
 	(if (eq 'Cons (type-of relation))
-		(setf answer (if (isCousin name1 name2 (second relation) (third relation))))
+		(progn 
+			(setf answer (if (isCousin name1 name2 (second relation) (third relation)) "Yes" "No"))
+			(return-from X answer)
 		)
+	)
 
 	(cond 
 		((equalp relation 'spouse) (setf answer (if (isSpouse p1 p2) "Yes" "No")))
@@ -252,8 +253,11 @@
 
 	;cousin case
 	(if (eq 'Cons (type-of relation))
-		(setf wPeople (nconc wPeople (getCousins person (second relation) (third relation))))
+		(progn 
+			(setf wPeople (nconc wPeople (getCousins person (second relation) (third relation))))
+			(return-from W wPeople)
 		)
+	)
 
 	(cond
 		((equalp relation 'spouse) (setf wPeople (nconc wPeople (person-spouse person))))
