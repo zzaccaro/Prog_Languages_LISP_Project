@@ -165,10 +165,39 @@
 )
 
 ;; boolean for cousin
-(defun isCousin ()
+(defun getCousins (p cuzNum remNum)
+"Gets a list of all of the First Cousins of person"
+"Gets parents, then parents siblings, then parent's sibling's kids"
+"CALLED WITH: (getCousinsXY '(person) 'number 'number)"
+	(setf pList1 p)
 
-	
+	;get shared grandparents
+	(dotimes (num cuzNum)
+		(setf pList2 nil)
+		(loop for x in pList1 do(
+			setf pList2 (remove-duplicates(nconc pList2 (person-parents x)))))
+		(setf pList1 pList2)
+		)
+
+	;get siblings of grandparents
+	(setf pList2 nil)
+	(loop for x in pList1 do(
+		setf pList2 (remove-duplicates (nconc pList2 (getSiblings x)))))
+	(setf pList1 pList2)
+
+	;get children on cousin level
+	(dotimes (num (+ cuzNum remNum))
+		(setf pList2 nil)
+		(loop for x in pList1 do(
+			setf pList2 (remove-duplicates (nconc pList2 (person-children x)))))
+		(setf pList1 pList2)
+		)
+
+	(setf pList1 (remove-duplicates (sort pList1 #'string-lessp)))
 	)
+
+
+
 
 ;; boolean for relative
 (defun isRelative (p1 p2)

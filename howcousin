@@ -1,0 +1,54 @@
+First cousins (pass person x):
+
+get x's parents -> store in list
+
+for each parent in the list get their siblings ->Store in list called parSibs
+
+for each in parSibs get children -> store in list cousins
+
+return cousins
+
+
+for cousins after first:
+(pass person x)
+get x's parents
+
+get x's parents first cousins
+
+get their kids
+
+return second cousins
+
+
+
+(defun getFrstCousins (p)
+	(setf pParents (person-parents p))
+	(setf pParSibs ())
+	(setf pFrstCousins ())
+	(loop for x in pParents do(
+		(setf pParSibs (nconc pParSibs (getSiblings x)))
+		)
+	)
+	(loop for x in pParSibs do(
+		(setf pFrstCousins (nconc pFrstCousins (person-children x)))
+		)
+	)
+	pFrstCousins
+	)
+
+(defun otherCousins (p)
+	(setf pParents (person-parents p))
+	(setf pParFirstCuz ())
+	(setf pOthrCuz ())
+
+	(loop for x in pParents do(
+		(setf pParFirstCuz (nconc pParFirstCuz (getFrstCousins x)))
+		)
+	)
+
+	(loop for x in pParFirstCuz do(
+		(setf pOthrCuz (nconc pOthrCuz (person-children x)))
+		)
+	)
+	pOthrCuz
+	)
