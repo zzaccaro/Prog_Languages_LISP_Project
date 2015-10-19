@@ -31,63 +31,58 @@
 
 ;function to add spouse
 (defun add-spouse (p spouse)
-	(setf (person-spouse p) (nconc (person-spouse p) (list spouse)))
+	(if (not (member spouse (person-spouse p))) 
+		(setf (person-spouse p) (nconc (person-spouse p) (list spouse)))
 	)
+)
 
 (defvar familytree (make-hash-table))
 
 ;; main function
 (defun family ()
-	(setf path "./input.txt")
-	(readfile path)
-)
+    (loop for line = (read-line *standard-input* nil :eof) until (eq line :eof)
 
-(defun readfile (string)
-    (with-open-file (infile string :direction :input)
-        (do ((line (read-line infile nil 'eof) (read-line infile nil 'eof))) 
-            ((eql line 'eof) 'done)
+         (setf inputList (read-from-string line))
+         (setf arg1 (first inputList))
+         (setf arg2 (second inputList))
+         (setf arg3 (third inputList))
+         (setf arg4 (fourth inputList))
 
-             (setf inputList (read-from-string line))
-             (setf arg1 (first inputList))
-             (setf arg2 (second inputList))
-             (setf arg3 (third inputList))
-             (setf arg4 (fourth inputList))
-
-             (cond 
-             	((eq 'E arg1) 
-             		(if (eq nil arg4) 
-             			(E1 arg2 arg3) 
-             			(E2 arg2 arg3 arg4)
-           			)
-             	)
-             	((eq 'R arg1) 
-             		(progn 
-             			(format t "~a~%" line) 
-             			(print (R arg2 arg3)) 
-             			(format t "~%")
-             		)
-             	)
-             	((eq 'W arg1) 
-             		(progn 
-             			(format t "~a~%" line) 
-             			(setf wPeopleList (W arg2 arg3)) 
-             			(loop for x in wPeopleList do 
-             				(print x)
-             			) 
-             			(format t "~%")
-             		)
-             	)
-             	((eq 'X arg1) 
-             		(progn 
-             			(format t "~a~%" line) 
-             			(print (X arg2 arg3 arg4)) 
-             			(format t "~%")
-             		)
-             	)
-             )
-        )
+         (cond 
+         	((eq 'E arg1) 
+         		(if (eq nil arg4) 
+         			(E1 arg2 arg3) 
+         			(E2 arg2 arg3 arg4)
+       			)
+         	)
+         	((eq 'R arg1) 
+         		(progn 
+         			(format t "~a~%" line) 
+         			(print (R arg2 arg3)) 
+         			(format t "~%")
+         		)
+         	)
+         	((eq 'W arg1) 
+         		(progn 
+         			(format t "~a~%" line) 
+         			(setf wPeopleList (W arg2 arg3)) 
+         			(loop for x in wPeopleList do 
+         				(print x)
+         			) 
+         			(format t "~%")
+         		)
+         	)
+         	((eq 'X arg1) 
+         		(progn 
+         			(format t "~a~%" line) 
+         			(print (X arg2 arg3 arg4)) 
+         			(format t "~%")
+         		)
+         	)
+         )
     )
 )
+
 
 ;; E query (first version)
 (defun E1 (name1 name2)
@@ -208,31 +203,32 @@
 ;"Gets a list of all of the First Cousins of person"
 ;"Gets parents, then parents siblings, then parent's sibling's kids"
 ;"CALLED WITH: (getCousinsXY '(person) 'number 'number)"
-	(setf pList1 p)
+	(setf pList1 (list p))
 
 	;get shared grandparents
 	(dotimes (num cuzNum)
 		(setf pList2 nil)
 		(loop for x in pList1 do(
-			setf pList2 (remove-duplicates(nconc pList2 (person-parents x)))))
+			setf pList2 (remove-duplicates (nconc pList2 (person-parents (gethash x familytree))))))
 		(setf pList1 pList2)
-		)
+	)
 
 	;get siblings of grandparents
 	(setf pList2 nil)
 	(loop for x in pList1 do(
-		setf pList2 (remove-duplicates (nconc pList2 (getSiblings x)))))
+		setf pList2 (remove-duplicates (nconc pList2 (getSiblings (gethash x familytree))))))
 	(setf pList1 pList2)
 
 	;get children on cousin level
 	(dotimes (num (+ cuzNum remNum))
 		(setf pList2 nil)
 		(loop for x in pList1 do(
-			setf pList2 (remove-duplicates (nconc pList2 (person-children x)))))
+			setf pList2 (remove-duplicates (nconc pList2 (person-children (gethash x familytree))))))
 		(setf pList1 pList2)
-		)
+	)
 
 	(setf pList1 (remove-duplicates (sort pList1 #'string-lessp)))
+	pList1
 )
 
 ;; boolean for cousin
@@ -294,7 +290,7 @@
 	;cousin case
 	(if (eq 'Cons (type-of relation))
 		(progn 
-			(setf wPeople (nconc wPeople (getCousins person (second relation) (third relation))))
+			(setf wPeople (nconc wPeople (getCousins name (second relation) (third relation))))
 			(return-from W wPeople)
 		)
 	)
