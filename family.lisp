@@ -40,8 +40,7 @@
 
 ;; main function
 (defun family ()
-    (loop for line = (read-line *standard-input* nil :eof) until (eq line :eof) do
-
+    (loop for line = (read-line *standard-input* nil) until (eq line nil) do
          (setf inputList (read-from-string line))
          (setf arg1 (first inputList))
          (setf arg2 (second inputList))
@@ -60,6 +59,7 @@
          			(format t "~a~%" line) 
          			(print (R arg2 arg3)) 
          			(format t "~%")
+         			(format t "~%")
          		)
          	)
          	((eq 'W arg1) 
@@ -70,12 +70,14 @@
          				(print x)
          			) 
          			(format t "~%")
+         			(format t "~%")
          		)
          	)
          	((eq 'X arg1) 
          		(progn 
          			(format t "~a~%" line) 
          			(print (X arg2 arg3 arg4)) 
+         			(format t "~%")
          			(format t "~%")
          		)
          	)

@@ -5,3 +5,8 @@
 (E Bill Megan Zach)
 (E Zach Taylor Max)
 (R Adam Bill)
+(R Bob Zach)
+(R Jess David)
+(W parent Max)
+(X Bill spouse Megan)
+(W (cousin 1 0) Bob)
