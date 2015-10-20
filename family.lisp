@@ -40,7 +40,7 @@
 
 ;; main function
 (defun family ()
-    (loop for line = (read-line *standard-input* nil :eof) until (eq line :eof)
+    (loop for line = (read-line *standard-input* nil :eof) until (eq line :eof) do
 
          (setf inputList (read-from-string line))
          (setf arg1 (first inputList))
