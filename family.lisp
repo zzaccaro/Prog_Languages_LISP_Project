@@ -126,9 +126,9 @@
 	(setf per1 (gethash p1 familytree))
 	(setf per2 (gethash p2 familytree))
 
-	(cond 
-		((or (equalp per1 nil) (equalp per2 nil)) "Unrelated")
+	(if (or (equalp per1 nil) (equalp per2 nil)) (return-from R "Person not in family tree."))
 
+	(cond 
 		((isSpouse per1 per2) "Spouse")
 
 		((isParent per1 per2) "Parent")
@@ -252,7 +252,7 @@
 	(setf p2 (gethash name2 familytree))
 
 	(if (or (eq p1 nil) (eq p2 nil))
-		(error "Person not in family tree.")
+		(return-from X "Person not in family tree.")
 	)
 
 	(setf answer "")
@@ -281,7 +281,7 @@
 	(setf wPeople ())
 
 	(if (eq person nil) 
-		(error "Person not in family tree.")
+		(return-from W '("Person not in family tree."))
 	)
 
 	;cousin case
@@ -348,7 +348,7 @@
 (defun getStrangers (p)
 	(setf strange ())
 	(loop for entry being the hash-keys of familytree do 
-		(if (and (not (isRelative entry p)) (not (isSpouse entry p)))
+		(if (and (not (isRelative (gethash entry familytree) p)) (not (isSpouse (gethash entry familytree) p)))
 			(setf strange (nconc strange (list entry)))
 		)
 	)
