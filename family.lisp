@@ -199,41 +199,36 @@
 	)
 )
 
-(defun getCousins (p cuzNum remNum)
-;"Gets a list of all of the First Cousins of person"
-;"Gets parents, then parents siblings, then parent's sibling's kids"
-;"CALLED WITH: (getCousinsXY '(person) 'number 'number)"
-	(setf pList1 (list p))
-
-	;get shared grandparents
-	(dotimes (num cuzNum)
-		(setf pList2 nil)
-		(loop for x in pList1 do(
-			setf pList2 (remove-duplicates (nconc pList2 (person-parents (gethash x familytree))))))
-		(setf pList1 pList2)
+(defun getCousins (person numCousin numRemoved)
+	(setq PersonList1 (list person))
+	(dotimes (num numCousin) 
+	    (setq PersonList2 nil)
+	    (loop for x in PersonList1
+	        do (setq PersonList2 (remove-duplicates(append PersonList2 (person-parents (gethash x familytree)))))
+		)
+	    (setq PersonList1 PersonList2)
 	)
 
-	;get siblings of grandparents
-	(setf pList2 nil)
-	(loop for x in pList1 do(
-		setf pList2 (remove-duplicates (nconc pList2 (getSiblings (gethash x familytree))))))
-	(setf pList1 pList2)
+	(setq PersonList2 nil)
+	(loop for x in PersonList1
+	    do (setq PersonList2 (remove-duplicates(append PersonList2 (getSiblings (gethash x familytree)))))
+	)
+	(setq PersonList1 PersonList2)
 
-	;get children on cousin level
-	(dotimes (num (+ cuzNum remNum))
-		(setf pList2 nil)
-		(loop for x in pList1 do(
-			setf pList2 (remove-duplicates (nconc pList2 (person-children (gethash x familytree))))))
-		(setf pList1 pList2)
+	(dotimes (num (+ numCousin numRemoved))
+        (setq PersonList2 nil)
+        (loop for x in PersonList1
+            do (setq PersonList2 (remove-duplicates(append PersonList2 (person-children (gethash x familytree)))))
+        )
+        (setq PersonList1 PersonList2)
 	)
 
-	(setf pList1 (remove-duplicates (sort pList1 #'string-lessp)))
-	pList1
+	(setq PersonList1 (remove-duplicates(sort PersonList1 #'string-lessp)))
 )
 
 ;; boolean for cousin
 (defun isCousin (p1 p2 cuzNum remNum)
-	 (member p1 (getCousins (list p2) cuzNum remNum))
+	 (member p1 (getCousins p2 cuzNum remNum))
 )
 
 ;; boolean for relative
